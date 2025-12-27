@@ -48,7 +48,6 @@ publishing {
                 developers {
                     developer {
                         id.set("oskarscot")
-                        name.set("Oskar")
                     }
                 }
 
