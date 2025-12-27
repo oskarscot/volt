@@ -30,7 +30,7 @@ tasks.test {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = "volt"
+            artifactId = "volt-core"
             from(components["java"])
 
             pom {
