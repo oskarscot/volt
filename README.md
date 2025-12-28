@@ -1,5 +1,7 @@
 # Volt
 
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.oskarscot/volt-core) 
+
 A lightweight Java ORM.
 
 > ⚠️ **Warning:** This project is heavily in development. APIs may change without notice.
@@ -9,14 +11,14 @@ A lightweight Java ORM.
 ### Gradle (Kotlin DSL)
 ```kotlin
 dependencies {
-    implementation("io.github.oskarscot:volt-core:0.0.1-alpha")
+    implementation("io.github.oskarscot:volt-core:0.0.3")
 }
 ```
 
 ### Gradle (Groovy)
 ```groovy
 dependencies {
-    implementation 'io.github.oskarscot:volt-core:0.0.1-alpha'
+    implementation 'io.github.oskarscot:volt-core:0.0.3'
 }
 ```
 
@@ -25,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>io.github.oskarscot</groupId>
     <artifactId>volt-core</artifactId>
-    <version>0.0.1-alpha</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
