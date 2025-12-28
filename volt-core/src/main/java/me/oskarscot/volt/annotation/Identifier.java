@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Identifier {
-    boolean generated() default true;
-    PrimaryKeyType type();
+  boolean generated() default true;
+
+  PrimaryKeyType type();
 }

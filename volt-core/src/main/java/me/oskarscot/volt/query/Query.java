@@ -5,34 +5,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Query {
-    private final List<Condition> conditions = new ArrayList<>();
 
-    public static FieldBuilder where(String field) {
-        Query query = new Query();
-        return new FieldBuilder(field, query);
-    }
+  private final List<Condition> conditions = new ArrayList<>();
 
-    public FieldBuilder and(String field) {
-        return new FieldBuilder(field, this);
-    }
+  public static FieldBuilder where(String field) {
+    Query query = new Query();
+    return new FieldBuilder(field, query);
+  }
 
-    void addCondition(Condition condition) {
-        conditions.add(condition);
-    }
+  public FieldBuilder and(String field) {
+    return new FieldBuilder(field, this);
+  }
 
-    public List<Condition> getConditions() {
-        return conditions;
-    }
+  void addCondition(Condition condition) {
+    conditions.add(condition);
+  }
 
-    public String toWhereClause() {
-        return conditions.stream()
-                .map(Condition::toSqlFragment)
-                .collect(Collectors.joining(" AND "));
-    }
+  public List<Condition> getConditions() {
+    return conditions;
+  }
 
-    public List<Object> collectValues() {
-        return conditions.stream()
-                .flatMap(c -> c.getValues().stream())
-                .toList();
-    }
+  public String toWhereClause() {
+    return conditions.stream().map(Condition::toSqlFragment).collect(Collectors.joining(" AND "));
+  }
+
+  public List<Object> collectValues() {
+    return conditions.stream().flatMap(c -> c.getValues().stream()).toList();
+  }
 }

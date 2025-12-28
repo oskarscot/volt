@@ -16,7 +16,8 @@ java {
 
 dependencies {
     api("com.zaxxer:HikariCP:7.0.2")
-    compileOnly("org.slf4j:slf4j-api:2.0.9")
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    compileOnly("org.jetbrains:annotations:26.0.2")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

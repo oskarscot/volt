@@ -4,17 +4,17 @@ import java.util.List;
 
 public class NoValueCondition extends Condition {
 
-    public NoValueCondition(String field, Operator operator) {
-        super(field, operator);
-    }
+  public NoValueCondition(String field, Operator operator) {
+    super(field, operator);
+  }
 
-    @Override
-    public String toSqlFragment() {
-        return field + " " + operator.sql();
-    }
+  @Override
+  public String toSqlFragment() {
+    return field + " " + operator.sql();
+  }
 
-    @Override
-    public List<Object> getValues() {
-        return List.of();
-    }
+  @Override
+  public List<Object> getValues() {
+    return List.of();
+  }
 }

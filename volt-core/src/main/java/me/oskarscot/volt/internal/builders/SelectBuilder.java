@@ -9,36 +9,36 @@ import java.util.List;
 
 public class SelectBuilder implements SqlBuilder {
 
-    private final EntityDefinition<?> definition;
+  private final EntityDefinition<?> definition;
 
-    public SelectBuilder(EntityDefinition<?> definition) {
-        this.definition = definition;
+  public SelectBuilder(EntityDefinition<?> definition) {
+    this.definition = definition;
+  }
+
+  @Override
+  public String toSql() {
+    return buildSelectClause() + " FROM " + definition.getTableName();
+  }
+
+  public String toSqlById() {
+    return toSql() + " WHERE " + definition.getPrimaryKey().getColumnName() + " = ?";
+  }
+
+  public String toSqlWithQuery(Query query) {
+    return toSql() + " WHERE " + query.toWhereClause();
+  }
+
+  private String buildSelectClause() {
+    List<String> columns = new ArrayList<>();
+
+    // Add primary key
+    columns.add(definition.getPrimaryKey().getColumnName());
+
+    // Add other fields
+    for (FieldDefinition field : definition.getFields()) {
+      columns.add(field.getColumnName());
     }
 
-    @Override
-    public String toSql() {
-        return buildSelectClause() + " FROM " + definition.getTableName();
-    }
-
-    public String toSqlById() {
-        return toSql() + " WHERE " + definition.getPrimaryKey().getColumnName() + " = ?";
-    }
-
-    public String toSqlWithQuery(Query query) {
-        return toSql() + " WHERE " + query.toWhereClause();
-    }
-
-    private String buildSelectClause() {
-        List<String> columns = new ArrayList<>();
-
-        // Add primary key
-        columns.add(definition.getPrimaryKey().getColumnName());
-
-        // Add other fields
-        for (FieldDefinition field : definition.getFields()) {
-            columns.add(field.getColumnName());
-        }
-
-        return "SELECT " + String.join(", ", columns);
-    }
+    return "SELECT " + String.join(", ", columns);
+  }
 }
