@@ -11,6 +11,7 @@ import me.oskarscot.volt.internal.builders.DeleteBuilder;
 import me.oskarscot.volt.internal.builders.InsertBuilder;
 import me.oskarscot.volt.internal.builders.SelectBuilder;
 import me.oskarscot.volt.internal.builders.UpdateBuilder;
+import me.oskarscot.volt.internal.builders.UpsertBuilder;
 import me.oskarscot.volt.internal.registry.ConverterRegistry;
 import me.oskarscot.volt.internal.registry.EntityRegistry;
 import me.oskarscot.volt.query.Condition;
@@ -36,30 +37,43 @@ public class TransactionImpl implements Transaction {
         this.connection = connection;
     }
 
-    @Override
-    public <T> Result<T, VoltError> save(T entity) {
-        EntityDefinition<T> definition = (EntityDefinition<T>) entityRegistry.get(entity.getClass());
+  @Override
+  public <T> Result<T, VoltError> save(T entity) {
+    EntityDefinition<T> definition = (EntityDefinition<T>) entityRegistry.get(entity.getClass());
 
-        if (definition == null) {
-            return Result.failure(new VoltError("Entity " + entity.getClass().getName() + " is not registered"));
-        }
-
-        PrimaryKey pk = definition.getPrimaryKey();
-        pk.getField().setAccessible(true);
-
-        Object pkValue;
-        try {
-            pkValue = pk.getField().get(entity);
-        } catch (IllegalAccessException e) {
-            return Result.failure(new VoltError("Cannot access primary key: " + e.getMessage()));
-        }
-
-        if (pkValue == null) {
-            return insert(entity, definition);
-        } else {
-            return update(entity, definition);
-        }
+    if (definition == null) {
+      return Result.failure(new VoltError("Entity " + entity.getClass().getName() + " is not registered"));
     }
+
+    PrimaryKey pk = definition.getPrimaryKey();
+    pk.getField().setAccessible(true);
+
+    Object pkValue;
+    try {
+      pkValue = pk.getField().get(entity);
+    } catch (IllegalAccessException e) {
+      return Result.failure(new VoltError("Cannot access primary key: " + e.getMessage()));
+    }
+
+    if (pkValue == null && pk.isGenerated() && pk.getPrimaryKeyType() == PrimaryKeyType.NUMBER) {
+      return insert(entity, definition);
+    }
+
+    return upsert(entity, definition);
+  }
+
+  private <T> Result<T, VoltError> upsert(T entity, EntityDefinition<T> definition) {
+    UpsertBuilder<T> builder = new UpsertBuilder<>(definition, entity, converterRegistry);
+    String sql = builder.toSql();
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+      builder.bindValues(stmt);
+      stmt.executeUpdate();
+      return Result.okay(entity);
+    } catch (SQLException | IllegalAccessException e) {
+      return Result.failure(new VoltError("Upsert failed: " + e.getMessage()));
+    }
+  }
 
     @Override
     public <T> Result<T, VoltError> findById(Class<T> type, Object id) {
